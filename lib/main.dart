@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_app_second/screens/add_screen.dart';
+import 'package:to_do_app_second/screens/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,8 +16,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // home: const SplashScreen(),
-      home: const AddDataScreen(),
+      home: SplashScreen(),
+      // home: const AddDataScreen(),
     );
   }
 }
