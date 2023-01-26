@@ -1,13 +1,8 @@
 class ToDoListModel {
-  List<String>? tasklist;
+  final String? title;
+  final String? date;
+  final String? time;
+  final String? description;
 
-  ToDoListModel({
-    this.tasklist = const [],
-  });
-
-  factory ToDoListModel.fromJson(Map<String, dynamic> json) {
-    return ToDoListModel(
-      tasklist: json["data"],
-    );
-  }
+  ToDoListModel({this.title, this.date, this.time, this.description});
 }

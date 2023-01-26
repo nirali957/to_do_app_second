@@ -12,77 +12,93 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  ToDoListModel? toDoListModel;
+  List<ToDoListModel> listData = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.notifications),
-          ),
-        ],
+        title: const Text('Home Screen'),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          dynamic data = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const AddDataScreen(),
+              builder: (context) => const AddScreen(),
             ),
           );
+
+          if (data != null) {
+            listData.add(data);
+            setState(() {});
+          }
         },
         child: const Icon(Icons.add),
       ),
-      body: Column(
-        children: [
-          Container(
-            color: Colors.purple,
-            child: Slidable(
-              key: const ValueKey(0),
-              startActionPane: ActionPane(
-                motion: const ScrollMotion(),
-                dismissible: Checkbox(
-                  value: true,
-                  onChanged: (value) {
-                    setState(() {
-                      value = value;
-                    });
-                  },
-                ),
-                children: [
-                  SlidableAction(
-                    onPressed: (context) {},
-                    backgroundColor: const Color(0xFF21B7CA),
-                    foregroundColor: Colors.white,
-                    icon: Icons.check_box_outline_blank,
-                  ),
-                ],
-              ),
-              endActionPane: ActionPane(
-                motion: const ScrollMotion(),
-                dismissible: DismissiblePane(onDismissed: () {}),
-                children: [
-                  SlidableAction(
-                    onPressed: (context) {},
-                    backgroundColor: const Color(0xFFFE4A49),
-                    foregroundColor: Colors.white,
-                    icon: Icons.delete,
-                    label: 'Delete',
-                  ),
-                ],
-              ),
+      body: listData.isEmpty
+          ? const Center(
               child: Text(
-                "task: ",
-                style: const TextStyle(
-                  fontSize: 18,
+                "No Task",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
+            )
+          : ListView.builder(
+              itemCount: listData.length,
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              itemBuilder: (context, index) {
+                final item = listData[index];
+                return Slidable(
+                  key: ValueKey(index),
+                  startActionPane: ActionPane(
+                    motion: const ScrollMotion(),
+                    children: [
+                      SlidableAction(
+                        onPressed: (context) {},
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        icon: Icons.check,
+                        label: 'Complete',
+                      ),
+                    ],
+                  ),
+                  endActionPane: ActionPane(
+                    motion: const ScrollMotion(),
+                    dismissible: DismissiblePane(onDismissed: () {}),
+                    children: [
+                      SlidableAction(
+                        // flex: 2,
+                        onPressed: (context) {},
+                        backgroundColor: const Color(0xFF7BC043),
+                        foregroundColor: Colors.white,
+                        icon: Icons.edit,
+                        label: 'Edit',
+                      ),
+                      SlidableAction(
+                        onPressed: (context) {},
+                        backgroundColor: const Color(0xFFFE4A49),
+                        foregroundColor: Colors.white,
+                        icon: Icons.delete,
+                        label: 'Delete',
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15).copyWith(top: 0),
+                    child: ListTile(
+                      style: ListTileStyle.drawer,
+                      tileColor: Colors.grey.shade400,
+                      title: Text('Title: ${item.title}'),
+                      subtitle: Text('Description: ${item.description}'),
+                      trailing: Text(''
+                          'Date: ${item.date}\nTime: ${item.time} '),
+                    ),
+                  ),
+                );
+              },
             ),
-          ),
-        ],
-      ),
     );
   }
 }

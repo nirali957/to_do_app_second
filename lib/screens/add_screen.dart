@@ -1,194 +1,101 @@
 import 'package:flutter/material.dart';
+import 'package:to_do_app_second/common_widget/common_textfield.dart';
 
 import '../model/to_do_model.dart';
-import 'home_screen.dart';
 
-class AddDataScreen extends StatefulWidget {
-  const AddDataScreen({Key? key}) : super(key: key);
+class AddScreen extends StatefulWidget {
+  const AddScreen({Key? key}) : super(key: key);
 
   @override
-  State<AddDataScreen> createState() => _AddDataScreenState();
+  State<AddScreen> createState() => _AddScreenState();
 }
 
-class _AddDataScreenState extends State<AddDataScreen> {
-  DateTime date = DateTime(2023, 01, 23);
-  TimeOfDay time = const TimeOfDay(hour: 12, minute: 00);
-  ToDoListModel? toDoListModel;
-  int val = 0;
-  List<String> data = [];
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    toDoListModel = ToDoListModel();
-    super.initState();
-  }
-
+class _AddScreenState extends State<AddScreen> {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Screen"),
+        title: const Text('TODO ADD'),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          data.add((val++).toString());
-          toDoListModel!.tasklist = data;
-          setState(() {});
-        },
-        child: const Icon(Icons.add),
-      ),
-      body: SafeArea(
-        child: toDoListModel!.tasklist == null
-            ? const SizedBox()
-            : ListView.builder(
-                itemCount: toDoListModel!.tasklist!.length,
-                itemBuilder: (context, index) => SizedBox(
-                  width: double.infinity,
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    margin: const EdgeInsets.all(20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Task: ${toDoListModel!.tasklist![index]}",
-                              style: const TextStyle(
-                                fontSize: 18,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: const [
-                            Expanded(
-                              child: TextField(
-                                keyboardType: TextInputType.multiline,
-                                maxLines: 1,
-                                decoration: InputDecoration(
-                                  hintStyle: TextStyle(color: Colors.indigo),
-                                  hintText: "Write your title...",
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: const [
-                            Expanded(
-                              child: TextField(
-                                keyboardType: TextInputType.multiline,
-                                maxLines: 4,
-                                decoration: InputDecoration(
-                                  hintStyle: TextStyle(color: Colors.indigo),
-                                  hintText: "Write your Description...",
-                                  filled: true,
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () async {
-                                DateTime? newDate = await showDatePicker(
-                                  context: context,
-                                  initialDate: date,
-                                  firstDate: DateTime(1900),
-                                  lastDate: DateTime(2050),
-                                );
-                                if (newDate == null) return;
-                                setState(
-                                  () => date = newDate,
-                                );
-                              },
-                              child: const Text("Select Date"),
-                            ),
-                            Text(
-                              "${date.day}/${date.month}/${date.year}",
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () async {
-                                TimeOfDay? newTime = await showTimePicker(
-                                  context: context,
-                                  initialTime: time,
-                                );
-                                if (newTime == null) return;
-                                setState(
-                                  () => time = newTime,
-                                );
-                              },
-                              child: const Text("Select Time"),
-                            ),
-                            Text(
-                              "${time.hour}:${time.minute}",
-                              style: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          width: 70,
-                          decoration: BoxDecoration(
-                            color: Colors.yellow,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                              );
-                            },
-                            child: const Text(
-                              textAlign: TextAlign.center,
-                              'Ok',
-                              style: TextStyle(fontSize: 25),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          CommonTextField(
+            textEditingController: titleController,
+            hintText: "Title",
+          ),
+          const SizedBox(height: 15),
+          GestureDetector(
+            onTap: () async {
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime.now(),
+                lastDate: DateTime(2040),
+              );
+              debugPrint("date ----------->> $pickedDate");
+              dateController.text = pickedDate.toString().split(" ").first;
+              setState(() {});
+            },
+            child: CommonTextField(
+              textEditingController: dateController,
+              enabled: false,
+              hintText: "Select Date",
+            ),
+          ),
+          const SizedBox(height: 15),
+          GestureDetector(
+            onTap: () async {
+              TimeOfDay? pickTime = await showTimePicker(
+                context: context,
+                initialTime: TimeOfDay.now(),
+              );
+
+              debugPrint("Time ---------->> ${pickTime!.format(context)}");
+              timeController.text = pickTime.format(context);
+              setState(() {});
+            },
+            child: CommonTextField(
+              enabled: false,
+              textEditingController: timeController,
+              hintText: "Select Time",
+            ),
+          ),
+          const SizedBox(height: 15),
+          CommonTextField(
+            textEditingController: descriptionController,
+            maxLines: 7,
+            minLines: 5,
+            hintText: "Description",
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 90, left: 90),
+            child: ElevatedButton(
+              onPressed: () {
+                ToDoListModel todoModel = ToDoListModel(
+                  title: titleController.text,
+                  date: dateController.text,
+                  time: timeController.text,
+                  description: descriptionController.text,
+                );
+                Navigator.pop(context, todoModel);
+              },
+              style: ButtonStyle(
+                fixedSize: MaterialStateProperty.all(
+                  const Size(double.infinity, 40),
                 ),
               ),
+              child: const Text("Add ToDo"),
+            ),
+          ),
+        ],
       ),
     );
   }
