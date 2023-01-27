@@ -4,7 +4,12 @@ import 'package:to_do_app_second/common_widget/common_textfield.dart';
 import '../model/to_do_model.dart';
 
 class AddScreen extends StatefulWidget {
-  const AddScreen({Key? key}) : super(key: key);
+  final ToDoListModel? item;
+
+  const AddScreen({
+    Key? key,
+    this.item,
+  }) : super(key: key);
 
   @override
   State<AddScreen> createState() => _AddScreenState();
@@ -15,6 +20,19 @@ class _AddScreenState extends State<AddScreen> {
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    if (widget.item != null) {
+      titleController.text = widget.item!.title!;
+      timeController.text = widget.item!.time!;
+      dateController.text = widget.item!.date!;
+      descriptionController.text = widget.item!.description!;
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -4,5 +4,10 @@ class ToDoListModel {
   final String? time;
   final String? description;
 
-  ToDoListModel({this.title, this.date, this.time, this.description});
+  ToDoListModel({
+    this.title,
+    this.date,
+    this.time,
+    this.description,
+  });
 }
