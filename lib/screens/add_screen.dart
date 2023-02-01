@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:to_do_app_second/common_widget/common_textfield.dart';
+import 'package:to_do_app_second/utils/local_data.dart';
 
 import '../model/to_do_model.dart';
 
@@ -20,6 +23,7 @@ class _AddScreenState extends State<AddScreen> {
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  LocalData localData = LocalData();
 
   @override
   void initState() {
@@ -74,6 +78,7 @@ class _AddScreenState extends State<AddScreen> {
               );
 
               debugPrint("Time ---------->> ${pickTime!.format(context)}");
+
               timeController.text = pickTime.format(context);
               setState(() {});
             },
@@ -103,6 +108,8 @@ class _AddScreenState extends State<AddScreen> {
                   time: timeController.text,
                   description: descriptionController.text,
                 );
+                localData.setObject(key: localData.todoData, value: jsonEncode(todoModel));
+
                 Navigator.pop(context, todoModel);
               },
               style: ButtonStyle(

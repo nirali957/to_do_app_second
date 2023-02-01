@@ -12,6 +12,7 @@ class ToDoCompleteScreen extends StatefulWidget {
 
 class _ToDoCompleteScreenState extends State<ToDoCompleteScreen> {
   List<ToDoListModel> listData = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +40,7 @@ class _ToDoCompleteScreenState extends State<ToDoCompleteScreen> {
                   tileColor: Colors.grey.shade400,
                   title: Text('Title: ${item.title}'),
                   subtitle: Text('Description: ${item.description}'),
-                  trailing: Text('Date: ${item.date}\nTime: ${item.time} '),
+                  trailing: Text('Date: ${item.date}\nTime: ${item.time}'),
                 );
               },
             ),

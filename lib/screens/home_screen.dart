@@ -4,6 +4,7 @@ import 'package:to_do_app_second/screens/to_do_complete_screen.dart';
 import 'package:to_do_app_second/utils/constant.dart';
 
 import '../model/to_do_model.dart';
+import '../utils/local_data.dart';
 import 'add_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,7 +15,26 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
   List<ToDoListModel> listData = [];
+  LocalData localData = LocalData();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getToDoData();
+    super.initState();
+  }
+
+  getToDoData() async {
+    dynamic data = await localData.getObject(key: localData.todoData);
+    listData.add(ToDoListModel.fromJson(data));
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context) => const AddScreen(),
             ),
           );
-
           if (data != null) {
             listData.add(data);
             setState(() {});
