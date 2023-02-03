@@ -15,12 +15,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
-  TextEditingController timeController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-  List<ToDoListModel> listData = [];
   LocalData localData = LocalData();
+  ToDoListModel? listData;
 
   @override
   void initState() {
@@ -30,8 +26,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   getToDoData() async {
-    dynamic data = await localData.getObject(key: localData.todoData);
-    listData.add(ToDoListModel.fromJson(data));
+    dynamic data = await localData.getObject(localData.todoData);
+    debugPrint('data------------------$data');
+    listData = ToDoListModel.fromJson(data);
     setState(() {});
   }
 
@@ -52,21 +49,17 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          dynamic data = await Navigator.push(
+        onPressed: () {
+          Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => const AddScreen(),
             ),
-          );
-          if (data != null) {
-            listData.add(data);
-            setState(() {});
-          }
+          ).then((value) => getToDoData());
         },
         child: const Icon(Icons.add),
       ),
-      body: listData.isEmpty
+      body: listData == null || listData!.todoList!.isEmpty
           ? const Center(
               child: Text(
                 "No Task",
@@ -77,18 +70,18 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             )
           : ListView.separated(
-              itemCount: listData.length,
+              itemCount: listData!.todoList!.length,
               padding: const EdgeInsets.symmetric(vertical: 15),
               separatorBuilder: (context, index) => const SizedBox(height: 15),
               itemBuilder: (context, index) {
-                final item = listData[index];
+                final item = listData!.todoList![index];
                 return Slidable(
                   key: UniqueKey(),
                   startActionPane: ActionPane(
                     motion: const ScrollMotion(),
                     dismissible: DismissiblePane(onDismissed: () {
-                      listofcompletedata.add(item);
-                      listData.removeAt(index);
+                      listofcompletedata.todoList!.add(item);
+                      listData!.todoList!.removeAt(index);
                       setState(() {});
                     }),
                     children: [
@@ -116,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
 
                           if (data != null) {
-                            listData[index] = data;
+                            listData!.todoList![index] = data;
                             setState(() {});
                           }
                         },
@@ -127,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       SlidableAction(
                         onPressed: (context) {
-                          listData.removeAt(index);
+                          listData!.todoList!.removeAt(index);
                           setState(() {});
                         },
                         backgroundColor: const Color(0xFFFE4A49),

@@ -1,4 +1,4 @@
 import 'package:to_do_app_second/model/to_do_model.dart';
 
 // Use for complete data
-List<ToDoListModel> listofcompletedata = [];
+ToDoListModel listofcompletedata = ToDoListModel();

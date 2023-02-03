@@ -1,25 +1,40 @@
 class ToDoListModel {
-  final String? title;
-  final String? date;
-  final String? time;
-  final String? description;
+  List<TodoList>? todoList;
 
   ToDoListModel({
-    this.title,
-    this.date,
-    this.time,
-    this.description,
+    this.todoList,
   });
+
   ToDoListModel.fromJson(Map<String, dynamic> json)
-      : title = json['title'] as String?,
-        date = json['date'] as String?,
-        time = json['time'] as String?,
-        description = json['description'] as String?;
+      : todoList = (json['todo_list'] as List?)
+            ?.map(
+              (dynamic e) => TodoList.fromJson(e as Map<String, dynamic>),
+            )
+            .toList();
 
   Map<String, dynamic> toJson() => {
-        'title': title,
-        'date': date,
-        'time': time,
-        'description': description,
+        'todo_list': todoList?.map((e) => e.toJson()).toList(),
       };
+}
+
+class TodoList {
+  final String? title;
+  final String? time;
+  final String? date;
+  final String? description;
+
+  TodoList({
+    this.title,
+    this.time,
+    this.date,
+    this.description,
+  });
+
+  TodoList.fromJson(Map<String, dynamic> json)
+      : title = json['title'] as String?,
+        time = json['time'] as String?,
+        date = json['date'] as String?,
+        description = json['description'] as String?;
+
+  Map<String, dynamic> toJson() => {'title': title, 'time': time, 'date': date, 'description': description};
 }

@@ -7,7 +7,7 @@ import 'package:to_do_app_second/utils/local_data.dart';
 import '../model/to_do_model.dart';
 
 class AddScreen extends StatefulWidget {
-  final ToDoListModel? item;
+  final TodoList? item;
 
   const AddScreen({
     Key? key,
@@ -24,6 +24,17 @@ class _AddScreenState extends State<AddScreen> {
   TextEditingController timeController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   LocalData localData = LocalData();
+  ToDoListModel toDoListModel = ToDoListModel();
+  getData() async {
+    if (await localData.containData(localData.todoData)) {
+      dynamic data = await localData.getObject(localData.todoData);
+      debugPrint("data------------$data");
+      toDoListModel = ToDoListModel.fromJson(data);
+    } else {
+      toDoListModel.todoList = [];
+    }
+    setState(() {});
+  }
 
   @override
   void initState() {
@@ -34,6 +45,7 @@ class _AddScreenState extends State<AddScreen> {
       dateController.text = widget.item!.date!;
       descriptionController.text = widget.item!.description!;
     }
+    getData();
     super.initState();
   }
 
@@ -98,27 +110,27 @@ class _AddScreenState extends State<AddScreen> {
           const SizedBox(
             height: 30,
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 90, left: 90),
-            child: ElevatedButton(
-              onPressed: () {
-                ToDoListModel todoModel = ToDoListModel(
-                  title: titleController.text,
-                  date: dateController.text,
-                  time: timeController.text,
-                  description: descriptionController.text,
-                );
-                localData.setObject(key: localData.todoData, value: jsonEncode(todoModel));
+          ElevatedButton(
+            onPressed: () {
+              TodoList todolist = TodoList(
+                title: titleController.text,
+                date: dateController.text,
+                time: timeController.text,
+                description: descriptionController.text,
+              );
+              toDoListModel.todoList!.add(todolist);
+              localData.removeData(localData.todoData);
 
-                Navigator.pop(context, todoModel);
-              },
-              style: ButtonStyle(
-                fixedSize: MaterialStateProperty.all(
-                  const Size(double.infinity, 40),
-                ),
+              localData.setObject(localData.todoData, jsonEncode(todolist));
+
+              Navigator.pop(context);
+            },
+            style: ButtonStyle(
+              fixedSize: MaterialStateProperty.all(
+                const Size(double.infinity, 40),
               ),
-              child: const Text("Add ToDo"),
             ),
+            child: const Text("Add ToDo"),
           ),
         ],
       ),
