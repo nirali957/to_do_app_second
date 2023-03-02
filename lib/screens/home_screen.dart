@@ -1,152 +1,115 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:to_do_app_second/screens/to_do_complete_screen.dart';
-import 'package:to_do_app_second/utils/constant.dart';
+import 'package:provider/provider.dart';
+import 'package:to_do_app_second/screens/function_screen.dart';
 
-import '../model/to_do_model.dart';
-import '../utils/local_data.dart';
-import 'add_screen.dart';
+class HomeScreen extends StatelessWidget {
+  final taskNameController = TextEditingController();
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  LocalData localData = LocalData();
-  ToDoListModel? listData;
-  ToDoListModel toDoListModel = ToDoListModel();
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    getToDoData();
-    super.initState();
-  }
-
-  getToDoData() async {
-    dynamic data = await localData.getObject(localData.todoData);
-    debugPrint('data------------------$data');
-    listData = ToDoListModel.fromJson(data);
-    setState(() {});
-  }
-  // getToDoData() async {
-  //   dynamic data = await localData.getObject(localData.todoData);
-  //   debugPrint('data------------------$data');
-  //   listData = ToDoListModel.fromJson(data);
-  //   setState(() {});
-  // }
+  HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final taskData = Provider.of<TaskData>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Screen'),
-        actions: [
-          IconButton(
-            onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ToDoCompleteScreen(),
-                )),
-            icon: const Icon(Icons.check_box),
-          )
-        ],
+        title: const Text('To Do App'),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AddScreen(),
-            ),
-          ).then((value) => getToDoData());
-        },
-        child: const Icon(Icons.add),
-      ),
-      body: listData == null || listData!.todoList!.isEmpty
-          ? const Center(
-              child: Text(
-                "No Task",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: taskNameController,
+              decoration: const InputDecoration(
+                hintText: 'Enter your task',
               ),
-            )
-          : ListView.separated(
-              itemCount: listData!.todoList!.length,
-              padding: const EdgeInsets.symmetric(vertical: 15),
-              separatorBuilder: (context, index) => const SizedBox(height: 15),
+            ),
+          ),
+          FloatingActionButton(
+              shape: const BeveledRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(35)),
+              ),
+              onPressed: () {
+                final taskName = taskNameController.text;
+                if (taskName.isNotEmpty) {
+                  taskData.addTask(taskName);
+                  taskNameController.clear();
+                }
+              },
+              child: const Text(
+                "Add",
+                style: TextStyle(fontSize: 20),
+              )),
+          Expanded(
+            child: ListView.builder(
+              itemCount: taskData.tasks.length,
               itemBuilder: (context, index) {
-                final item = listData!.todoList![index];
-                return Slidable(
-                  key: UniqueKey(),
-                  startActionPane: ActionPane(
-                    motion: const ScrollMotion(),
-                    dismissible: DismissiblePane(onDismissed: () {
-                      listofcompletedata.todoList!.add(item);
-                      listData!.todoList!.removeAt(index);
-                      setState(() {});
-                    }),
+                final task = taskData.tasks[index];
+                return ListTile(
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SlidableAction(
-                        onPressed: (context) {},
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                        icon: Icons.check,
-                        label: 'Complete',
+                      Text(task.name),
+                      IconButton(
+                        onPressed: () => _editTask(context, taskData, index, task.name),
+                        icon: const Icon(
+                          Icons.edit,
+                          color: Colors.green,
+                        ),
                       ),
                     ],
                   ),
-                  endActionPane: ActionPane(
-                    motion: const ScrollMotion(),
-                    children: [
-                      SlidableAction(
-                        onPressed: (context) async {
-                          dynamic data = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AddScreen(
-                                item: item,
-                              ),
-                            ),
-                          );
-
-                          if (data != null) {
-                            listData!.todoList![index] = data;
-                            setState(() {});
-                          }
-                        },
-                        backgroundColor: const Color(0xFF7BC043),
-                        foregroundColor: Colors.white,
-                        icon: Icons.edit,
-                        label: 'Edit',
-                      ),
-                      SlidableAction(
-                        onPressed: (context) {
-                          listData!.todoList!.removeAt(index);
-                          setState(() {});
-                        },
-                        backgroundColor: const Color(0xFFFE4A49),
-                        foregroundColor: Colors.white,
-                        icon: Icons.delete,
-                        label: 'Delete',
-                      ),
-                    ],
-                  ),
-                  child: ListTile(
-                    style: ListTileStyle.drawer,
-                    tileColor: Colors.grey.shade400,
-                    title: Text('Title: ${item.title}'),
-                    subtitle: Text('Description: ${item.description}'),
-                    trailing: Text('Date: ${item.date}\nTime: ${item.time} '),
+                  trailing: IconButton(
+                      onPressed: () => taskData.deleteTask(index),
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      )),
+                  leading: Checkbox(
+                    value: task.isCompleted,
+                    checkColor: Colors.black,
+                    onChanged: (value) => taskData.completeTask(index),
                   ),
                 );
               },
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _editTask(BuildContext context, TaskData taskData, int index, String oldName) {
+    final newNameController = TextEditingController(text: oldName);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit Task'),
+          content: TextField(
+            controller: newNameController,
+            decoration: const InputDecoration(hintText: 'Enter new task name'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: const Text('Save'),
+              onPressed: () {
+                final newName = newNameController.text;
+                if (newName.isNotEmpty) {
+                  taskData.editTask(index, newName);
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
