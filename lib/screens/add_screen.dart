@@ -110,27 +110,30 @@ class _AddScreenState extends State<AddScreen> {
           const SizedBox(
             height: 30,
           ),
-          ElevatedButton(
-            onPressed: () {
-              TodoList todolist = TodoList(
-                title: titleController.text,
-                date: dateController.text,
-                time: timeController.text,
-                description: descriptionController.text,
-              );
-              toDoListModel.todoList!.add(todolist);
-              localData.removeData(localData.todoData);
+          Padding(
+            padding: const EdgeInsets.only(left: 30, right: 30),
+            child: ElevatedButton(
+              onPressed: () {
+                TodoList todolist = TodoList(
+                  title: titleController.text,
+                  date: dateController.text,
+                  time: timeController.text,
+                  description: descriptionController.text,
+                );
+                toDoListModel.todoList!.add(todolist);
+                localData.removeData(localData.todoData);
 
-              localData.setObject(localData.todoData, jsonEncode(todolist));
+                localData.setObject(localData.todoData, jsonEncode(todolist));
 
-              Navigator.pop(context);
-            },
-            style: ButtonStyle(
-              fixedSize: MaterialStateProperty.all(
-                const Size(double.infinity, 40),
+                Navigator.pop(context);
+              },
+              style: ButtonStyle(
+                fixedSize: MaterialStateProperty.all(
+                  const Size(double.infinity, 40),
+                ),
               ),
+              child: const Text("Add ToDo"),
             ),
-            child: const Text("Add ToDo"),
           ),
         ],
       ),

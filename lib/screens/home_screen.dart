@@ -17,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   LocalData localData = LocalData();
   ToDoListModel? listData;
+  ToDoListModel toDoListModel = ToDoListModel();
 
   @override
   void initState() {
@@ -31,6 +32,12 @@ class _HomeScreenState extends State<HomeScreen> {
     listData = ToDoListModel.fromJson(data);
     setState(() {});
   }
+  // getToDoData() async {
+  //   dynamic data = await localData.getObject(localData.todoData);
+  //   debugPrint('data------------------$data');
+  //   listData = ToDoListModel.fromJson(data);
+  //   setState(() {});
+  // }
 
   @override
   Widget build(BuildContext context) {

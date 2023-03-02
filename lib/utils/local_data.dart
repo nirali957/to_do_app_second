@@ -5,9 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalData {
   SharedPreferences? prefs;
   String todoData = "todoData";
-  setObject(String key, dynamic value) async {
+  setObject(String key, dynamic val) async {
     prefs = await SharedPreferences.getInstance();
-    prefs!.setString(key, value);
+    prefs!.setString(key, val);
   }
 
   Future getObject(String key) async {
@@ -16,9 +16,9 @@ class LocalData {
     return jsonDecode(data);
   }
 
-  setString(String key, String value) async {
+  setString(String key, String val) async {
     prefs = await SharedPreferences.getInstance();
-    await prefs!.setString(key, value);
+    await prefs!.setString(key, val);
   }
 
   Future<String> getString(String key) async {
@@ -26,9 +26,9 @@ class LocalData {
     return prefs!.getString(key)!;
   }
 
-  setBool(String key, bool value) async {
+  setBool(String key, bool val) async {
     prefs = await SharedPreferences.getInstance();
-    await prefs!.setBool(key, value);
+    await prefs!.setBool(key, val);
   }
 
   Future<bool> getBool(String key) async {
@@ -36,9 +36,9 @@ class LocalData {
     return prefs!.getBool(key)!;
   }
 
-  setDouble(String key, double value) async {
+  setDouble(String key, double val) async {
     prefs = await SharedPreferences.getInstance();
-    await prefs!.setDouble(key, value);
+    await prefs!.setDouble(key, val);
   }
 
   Future<double> getDouble(String key) async {
@@ -46,9 +46,9 @@ class LocalData {
     return prefs!.getDouble(key)!;
   }
 
-  setStringList(String key, List<String> value) async {
+  setStringList(String key, List<String> val) async {
     prefs = await SharedPreferences.getInstance();
-    await prefs!.setStringList(key, value);
+    await prefs!.setStringList(key, val);
   }
 
   Future<List<String>> getStringList(String key) async {
